@@ -25,7 +25,7 @@ tf.flags.DEFINE_integer("embedding_size", 20,
 tf.flags.DEFINE_integer("memory_size", 100, "Maximum size of memory.")
 tf.flags.DEFINE_integer("task_id", 6, "bAbI task id, 1 <= id <= 6")
 tf.flags.DEFINE_integer("random_state", None, "Random state.")
-tf.flags.DEFINE_string("data_dir", "data/dialog-bAbI-tasks/",
+tf.flags.DEFINE_string("data_dir", "data/1-1-QA-without-context/",
                        "Directory containing bAbI tasks")
 tf.flags.DEFINE_string("model_dir", "model/",
                        "Directory containing memn2n model checkpoints")
@@ -112,6 +112,7 @@ class chatBot(object):
               self.candidate_sentence_size)
         print("Longest story length", max_story_size)
         print("Average story length", mean_story_size)
+        print("word to id dict", self.word_idx)
 
     def interactive(self):
         context = []

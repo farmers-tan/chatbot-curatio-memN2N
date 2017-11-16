@@ -169,6 +169,10 @@ def vectorize_candidates(candidates,word_idx,sentence_size):
     return tf.constant(C,shape=shape)
 
 
+# word_idx is just assigning a number to a word. If a new word comes out of the vocabulary it has
+# built over training, it will be 0. So new word cannot be well predicted. Max sentence length is 
+# kept and 0's are appended whenever the sentence length is less than max sentence length. Means
+# you cant ask a query more than max sentence lenght or it may fail
 def vectorize_data(data, word_idx, sentence_size, batch_size, candidates_size, max_memory_size):
     """
     Vectorize stories and queries.
