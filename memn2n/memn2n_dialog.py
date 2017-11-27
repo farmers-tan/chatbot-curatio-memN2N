@@ -173,6 +173,7 @@ class MemN2NDialog(object):
             W = tf.concat([nil_word_slot, self._init(
                 [self._vocab_size - 1, self._embedding_size])], 0)
             self.W = tf.Variable(W, name="W")
+
             # self.W = tf.Variable(self._init([self._vocab_size, self._embedding_size]), name="W")
         self._nil_vars = set([self.A.name, self.W.name])
 
@@ -238,3 +239,8 @@ class MemN2NDialog(object):
         """
         feed_dict = {self._stories: stories, self._queries: queries}
         return self._sess.run(self.predict_op, feed_dict=feed_dict)
+
+    def assign_word_embeddings(self, word_embeddings):
+        # Before training use word_embeddings from glove vectors
+        self.A = word_embeddings
+        self.W = word_embeddings

@@ -150,22 +150,29 @@ def get_dialogs(f,candid_dic):
     with open(f) as f:
         return parse_dialogs_per_response(f.readlines(),candid_dic)
 
-def vectorize_candidates_sparse(candidates,word_idx):
+def vectorize_candidates_sparse(candidates,word_idx, vocab, ivocab, word_vector_size):
     shape=(len(candidates),len(word_idx)+1)
     indices=[]
     values=[]
     for i,candidate in enumerate(candidates):
         for w in candidate:
-            indices.append([i,word_idx[w]])
+            #indices.append([i,word_idx[w]])
+            indices.append([i, process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="word2vec")])
             values.append(1.0)
     return tf.SparseTensor(indices,values,shape)
 
-def vectorize_candidates(candidates,word_idx,sentence_size):
+def vectorize_candidates(candidates,word_idx,sentence_size, vocab, ivocab, word_vector_size):
     shape=(len(candidates),sentence_size)
+    print(shape)
     C=[]
+
     for i,candidate in enumerate(candidates):
         lc=max(0,sentence_size-len(candidate))
-        C.append([word_idx[w] if w in word_idx else 0 for w in candidate] + [0] * lc)
+        #C.append([word_idx[w] if w in word_idx else 0 for w in candidate] + [0] * lc)
+        C.append([process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="index") for w in candidate] + [0] * lc)
+        #C.append([[process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="word2vec")] for w in candidate] + [pad] * lc)
+
+    #array_C = np.vstack(np.array(C))
     return tf.constant(C,shape=shape)
 
 
@@ -173,7 +180,7 @@ def vectorize_candidates(candidates,word_idx,sentence_size):
 # built over training, it will be 0. So new word cannot be well predicted. Max sentence length is 
 # kept and 0's are appended whenever the sentence length is less than max sentence length. Means
 # you cant ask a query more than max sentence lenght or it may fail
-def vectorize_data(data, word_idx, sentence_size, batch_size, candidates_size, max_memory_size):
+def vectorize_data(data, word_idx, sentence_size, batch_size, candidates_size, max_memory_size, vocab, ivocab, word_vector_size):
     """
     Vectorize stories and queries.
 
@@ -194,7 +201,9 @@ def vectorize_data(data, word_idx, sentence_size, batch_size, candidates_size, m
         ss = []
         for i, sentence in enumerate(story, 1):
             ls = max(0, sentence_size - len(sentence))
-            ss.append([word_idx[w] if w in word_idx else 0 for w in sentence] + [0] * ls)
+            #ss.append([word_idx[w] if w in word_idx else 0 for w in sentence] + [0] * ls)
+            ss.append([process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="index") for w in sentence] + [0] * ls)
+            # inp_vector = [list(process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="index")) for w in sentence]
 
         # take only the most recent sentences that fit in memory
         ss = ss[::-1][:memory_size][::-1]
@@ -205,9 +214,61 @@ def vectorize_data(data, word_idx, sentence_size, batch_size, candidates_size, m
             ss.append([0] * sentence_size)
 
         lq = max(0, sentence_size - len(query))
-        q = [word_idx[w] if w in word_idx else 0 for w in query] + [0] * lq
+        #q = [word_idx[w] if w in word_idx else 0 for w in query] + [0] * lq
+        q = [process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="index") for w in query] + [0] * lq
 
         S.append(np.array(ss))
         Q.append(np.array(q))
         A.append(np.array(answer))
     return S, Q, A
+
+
+def load_glove(dim):
+    word2vec = {}
+    
+    print("==> loading glove")
+    with open(("./data/glove/glove.6B." + str(dim) + "d.txt"), encoding="utf8") as f:
+        for line in f:    
+            l = line.split()
+            word2vec[l[0]] = list(map(float, l[1:]))
+            
+    print("==> glove is loaded")
+    
+    return word2vec
+
+
+def create_vector(word, word2vec, word_vector_size, silent=True):
+    # if the word is missing from Glove, create some fake vector and store in glove!
+    vector = np.random.uniform(0.0,1.0,(word_vector_size,))
+    word2vec[word] = vector
+    if (not silent):
+        print("utils.py::create_vector => %s is missing" % word)
+    return vector
+
+def process_word(word, word2vec, vocab, ivocab, word_vector_size, to_return="word2vec", silent=True):
+    if not word in word2vec:
+        create_vector(word, word2vec, word_vector_size, silent)
+    if not word in vocab: 
+        next_index = len(vocab)
+        vocab[word] = next_index
+        ivocab[next_index] = word
+
+    vec = list(word2vec[word])
+    if vec == []:
+        create_vector(word, word2vec, word_vector_size, silent)
+        # print ("creating vector")
+        # print(word)
+    
+    if to_return == "word2vec":
+        return word2vec[word]
+    elif to_return == "index":
+        return vocab[word]
+    elif to_return == "onehot":
+        raise Exception("to_return = 'onehot' is not implemented yet")
+
+def create_embedding(word2vec, ivocab, embed_size):
+    embedding = np.zeros((len(ivocab), embed_size))
+    for i in range(len(ivocab)):
+        word = ivocab[i]
+        embedding[i] = list(word2vec[word])
+    return embedding

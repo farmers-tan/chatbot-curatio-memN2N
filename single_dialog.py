@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
-from data_utils import load_dialog_task, vectorize_data, load_candidates, vectorize_candidates, vectorize_candidates_sparse, tokenize
+from data_utils import load_dialog_task, vectorize_data, load_candidates, vectorize_candidates, load_glove, tokenize, process_word, create_embedding
 from sklearn import metrics
 from memn2n import MemN2NDialog
 from itertools import chain
@@ -20,7 +20,7 @@ tf.flags.DEFINE_integer("evaluation_interval", 10,
 tf.flags.DEFINE_integer("batch_size", 32, "Batch size for training.")
 tf.flags.DEFINE_integer("hops", 3, "Number of hops in the Memory Network.")
 tf.flags.DEFINE_integer("epochs", 200, "Number of epochs to train for.")
-tf.flags.DEFINE_integer("embedding_size", 20,
+tf.flags.DEFINE_integer("embedding_size", 100,
                         "Embedding size for embedding matrices.")
 tf.flags.DEFINE_integer("memory_size", 100, "Maximum size of memory.")
 tf.flags.DEFINE_integer("task_id", 6, "bAbI task id, 1 <= id <= 6")
@@ -37,7 +37,7 @@ print("Started Task:", FLAGS.task_id)
 
 
 class chatBot(object):
-    def __init__(self, data_dir, model_dir, task_id, isInteractive=True, OOV=False, memory_size=50, random_state=None, batch_size=32, learning_rate=0.001, epsilon=1e-8, max_grad_norm=40.0, evaluation_interval=10, hops=3, epochs=200, embedding_size=20):
+    def __init__(self, data_dir, model_dir, task_id, isInteractive=True, OOV=False, memory_size=50, random_state=None, batch_size=32, learning_rate=0.001, epsilon=1e-8, max_grad_norm=40.0, evaluation_interval=10, hops=3, epochs=200, embedding_size=100):
         self.data_dir = data_dir
         self.task_id = task_id
         self.model_dir = model_dir
@@ -54,6 +54,21 @@ class chatBot(object):
         self.hops = hops
         self.epochs = epochs
         self.embedding_size = embedding_size
+        self.vocab = {}
+        self.ivocab = {}
+        self.word2vec = {}
+        self.word2vec_init = True
+
+        if self.word2vec_init:
+            # assert config.embed_size == 100
+            self.word2vec = load_glove(self.embedding_size)
+
+        process_word(word = "<eos>", 
+                word2vec = self.word2vec, 
+                vocab = self.vocab, 
+                ivocab = self.ivocab, 
+                word_vector_size = self.embedding_size, 
+                to_return = "index")
 
         candidates, self.candid2indx = load_candidates(
             self.data_dir, self.task_id)
@@ -67,8 +82,9 @@ class chatBot(object):
         data = self.trainData + self.testData + self.valData
         self.build_vocab(data, candidates)
         # self.candidates_vec=vectorize_candidates_sparse(candidates,self.word_idx)
+
         self.candidates_vec = vectorize_candidates(
-            candidates, self.word_idx, self.candidate_sentence_size)
+            candidates, self.word2vec, self.candidate_sentence_size, self.vocab, self.ivocab, self.embedding_size)
         optimizer = tf.train.AdamOptimizer(
             learning_rate=self.learning_rate, epsilon=self.epsilon)
         self.sess = tf.Session()
@@ -112,7 +128,7 @@ class chatBot(object):
               self.candidate_sentence_size)
         print("Longest story length", max_story_size)
         print("Average story length", mean_story_size)
-        print("word to id dict", self.word_idx)
+        #print("word to id dict", self.word_idx)
 
     def interactive(self):
         context = []
@@ -133,7 +149,7 @@ class chatBot(object):
             # Need to take care of the candidate sentence size > sentence size. In both main function and here
             # Whichever of candidate_size or candidate_sentence_size is higher, that should be allowed
             s, q, a = vectorize_data(
-                data, self.word_idx, self.max_sentence_size, self.batch_size, self.n_cand, self.memory_size)
+                data, self.word2vec, self.max_sentence_size, self.batch_size, self.n_cand, self.memory_size, self.vocab, self.ivocab, self.embedding_size)
             preds = self.model.predict(s, q)
             r = self.indx2candid[preds[0]]
             print(r)
@@ -148,9 +164,9 @@ class chatBot(object):
 
     def train(self):
         trainS, trainQ, trainA = vectorize_data(
-            self.trainData, self.word_idx, self.max_sentence_size, self.batch_size, self.n_cand, self.memory_size)
+            self.trainData, self.word2vec, self.max_sentence_size, self.batch_size, self.n_cand, self.memory_size, self.vocab, self.ivocab, self.embedding_size)
         valS, valQ, valA = vectorize_data(
-            self.valData, self.word_idx, self.max_sentence_size, self.batch_size, self.n_cand, self.memory_size)
+            self.valData, self.word2vec, self.max_sentence_size, self.batch_size, self.n_cand, self.memory_size, self.vocab, self.ivocab, self.embedding_size)
         n_train = len(trainS)
         n_val = len(valS)
         print("Training Size", n_train)
@@ -161,6 +177,10 @@ class chatBot(object):
         batches = [(start, end) for start, end in batches]
         best_validation_accuracy = 0
 
+        # Create word_embeddings 
+        word_embeddings = create_embedding(self.word2vec, self.ivocab, self.embedding_size)
+        self.model.assign_word_embeddings(word_embeddings)
+
         for t in range(1, self.epochs + 1):
             np.random.shuffle(batches)
             total_cost = 0.0
@@ -168,6 +188,7 @@ class chatBot(object):
                 s = trainS[start:end]
                 q = trainQ[start:end]
                 a = trainA[start:end]
+
                 cost_t = self.model.batch_fit(s, q, a)
                 total_cost += cost_t
             if t % self.evaluation_interval == 0:
@@ -209,7 +230,7 @@ class chatBot(object):
             self.interactive()
         else:
             testS, testQ, testA = vectorize_data(
-                self.testData, self.word_idx, self.max_sentence_size, self.batch_size, self.n_cand, self.memory_size)
+                self.testData, self.word2vec, self.max_sentence_size, self.batch_size, self.n_cand, self.memory_size, self.vocab, self.ivocab, self.embedding_size)
             n_test = len(testS)
             print("Testing Size", n_test)
             test_preds = self.batch_predict(testS, testQ, n_test)

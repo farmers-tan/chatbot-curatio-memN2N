@@ -105,3 +105,5 @@ ENV/
 
 task_*
 task*
+
+data/glove/*
