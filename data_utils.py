@@ -157,7 +157,7 @@ def vectorize_candidates_sparse(candidates,word_idx, vocab, ivocab, word_vector_
     for i,candidate in enumerate(candidates):
         for w in candidate:
             #indices.append([i,word_idx[w]])
-            indices.append([i, process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="word2vec")])
+            indices.append([i, process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="index")])
             values.append(1.0)
     return tf.SparseTensor(indices,values,shape)
 

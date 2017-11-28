@@ -180,6 +180,7 @@ class MemN2NDialog(object):
     def _inference(self, stories, queries):
         with tf.variable_scope(self._name):
             q_emb = tf.nn.embedding_lookup(self.A, queries)
+            print('here')
             u_0 = tf.reduce_sum(q_emb, 1)
             u = [u_0]
             for _ in range(self._hops):

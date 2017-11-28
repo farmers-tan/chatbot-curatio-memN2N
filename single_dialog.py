@@ -110,6 +110,7 @@ class chatBot(object):
         vocab |= reduce(lambda x, y: x | y, (set(candidate)
                                              for candidate in candidates))
         vocab = sorted(vocab)
+
         self.word_idx = dict((c, i + 1) for i, c in enumerate(vocab))
         max_story_size = max(map(len, (s for s, _, _ in data)))
         mean_story_size = int(np.mean([len(s) for s, _, _ in data]))
@@ -180,6 +181,9 @@ class chatBot(object):
         # Create word_embeddings 
         word_embeddings = create_embedding(self.word2vec, self.ivocab, self.embedding_size)
         self.model.assign_word_embeddings(word_embeddings)
+        print(self.vocab_size)
+        print("====")
+        print(word_embeddings.shape)
 
         for t in range(1, self.epochs + 1):
             np.random.shuffle(batches)
@@ -224,6 +228,12 @@ class chatBot(object):
         ckpt = tf.train.get_checkpoint_state(self.model_dir)
         if ckpt and ckpt.model_checkpoint_path:
             self.saver.restore(self.sess, ckpt.model_checkpoint_path)
+            # Basically recreate the indices of new words in the same way as train function. If index position different in test compared to train,
+            # the look up table embedding features are different for the word, reducing accuracy
+            trainS, trainQ, trainA = vectorize_data(
+                self.trainData, self.word2vec, self.max_sentence_size, self.batch_size, self.n_cand, self.memory_size, self.vocab, self.ivocab, self.embedding_size)
+            valS, valQ, valA = vectorize_data(
+                self.valData, self.word2vec, self.max_sentence_size, self.batch_size, self.n_cand, self.memory_size, self.vocab, self.ivocab, self.embedding_size)
         else:
             print("...no checkpoint found...")
         if self.isInteractive:
@@ -260,6 +270,7 @@ if __name__ == '__main__':
     # chatbot.run()
     if FLAGS.train:
         chatbot.train()
+        chatbot.test()
     else:
         chatbot.test()
     chatbot.close_session()
