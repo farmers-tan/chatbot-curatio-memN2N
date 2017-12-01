@@ -70,6 +70,15 @@ class chatBot(object):
                 word_vector_size = self.embedding_size, 
                 to_return = "index")
 
+        # Define uncertain or unknown word index and vec for use later for training out-of-context data
+        self.uncertain_word_index = process_word(word = "sdfsssdf", 
+                word2vec = self.word2vec, 
+                vocab = self.vocab, 
+                ivocab = self.ivocab, 
+                word_vector_size = self.embedding_size, 
+                to_return = "index")
+
+
         candidates, self.candid2indx = load_candidates(
             self.data_dir, self.task_id)
         self.n_cand = len(candidates)
@@ -80,16 +89,27 @@ class chatBot(object):
         self.trainData, self.testData, self.valData = load_dialog_task(
             self.data_dir, self.task_id, self.candid2indx, self.OOV)
         data = self.trainData + self.testData + self.valData
-        self.build_vocab(data, candidates)
+
+        self.build_vocab(data, candidates, self.vocab)
+        self.set_max_sentence_length()
+
+        self.trainS, self.trainQ, self.trainA = vectorize_data(
+            self.trainData, self.word2vec, self.max_sentence_size, self.batch_size, self.n_cand, self.memory_size, self.vocab, self.ivocab, self.embedding_size, 
+            uncertain = self.uncertain_word_index)
+        self.valS, self.valQ, self.valA = vectorize_data(
+            self.valData, self.word2vec, self.max_sentence_size, self.batch_size, self.n_cand, self.memory_size, self.vocab, self.ivocab, self.embedding_size, 
+            uncertain_word = True, uncertain = self.uncertain_word_index)
+        #self.build_vocab(data, candidates)
         # self.candidates_vec=vectorize_candidates_sparse(candidates,self.word_idx)
 
         self.candidates_vec = vectorize_candidates(
             candidates, self.word2vec, self.candidate_sentence_size, self.vocab, self.ivocab, self.embedding_size)
+
+        self.build_vocab(data, candidates, self.vocab)
         optimizer = tf.train.AdamOptimizer(
             learning_rate=self.learning_rate, epsilon=self.epsilon)
         self.sess = tf.Session()
         # Set max sentence vector size
-        self.set_max_sentence_length()
         # Need to understand more about sentence size. Model failing because sentence size > candidate_sentence_size? Answers longer than queries?
         self.model = MemN2NDialog(self.batch_size, self.vocab_size, self.n_cand, self.max_sentence_size, self.embedding_size, self.candidates_vec, session=self.sess,
                                   hops=self.hops, max_grad_norm=self.max_grad_norm, optimizer=optimizer, task_id=task_id)
@@ -104,12 +124,13 @@ class chatBot(object):
         else:
             self.max_sentence_size = self.sentence_size
 
-    def build_vocab(self, data, candidates):
-        vocab = reduce(lambda x, y: x | y, (set(
-            list(chain.from_iterable(s)) + q) for s, q, a in data))
-        vocab |= reduce(lambda x, y: x | y, (set(candidate)
-                                             for candidate in candidates))
-        vocab = sorted(vocab)
+    def build_vocab(self, data, candidates, vocab):
+        if self.vocab == {}:
+            vocab = reduce(lambda x, y: x | y, (set(
+                list(chain.from_iterable(s)) + q) for s, q, a in data))
+            vocab |= reduce(lambda x, y: x | y, (set(candidate)
+                                                 for candidate in candidates))
+            vocab = sorted(vocab)
 
         self.word_idx = dict((c, i + 1) for i, c in enumerate(vocab))
         max_story_size = max(map(len, (s for s, _, _ in data)))
@@ -150,7 +171,8 @@ class chatBot(object):
             # Need to take care of the candidate sentence size > sentence size. In both main function and here
             # Whichever of candidate_size or candidate_sentence_size is higher, that should be allowed
             s, q, a = vectorize_data(
-                data, self.word2vec, self.max_sentence_size, self.batch_size, self.n_cand, self.memory_size, self.vocab, self.ivocab, self.embedding_size)
+                data, self.word2vec, self.max_sentence_size, self.batch_size, self.n_cand, self.memory_size, self.vocab, self.ivocab, self.embedding_size,
+                uncertain_word = True, uncertain = self.uncertain_word_index)
             preds = self.model.predict(s, q)
             r = self.indx2candid[preds[0]]
             print(r)
@@ -164,12 +186,9 @@ class chatBot(object):
             nid += 1
 
     def train(self):
-        trainS, trainQ, trainA = vectorize_data(
-            self.trainData, self.word2vec, self.max_sentence_size, self.batch_size, self.n_cand, self.memory_size, self.vocab, self.ivocab, self.embedding_size)
-        valS, valQ, valA = vectorize_data(
-            self.valData, self.word2vec, self.max_sentence_size, self.batch_size, self.n_cand, self.memory_size, self.vocab, self.ivocab, self.embedding_size)
-        n_train = len(trainS)
-        n_val = len(valS)
+        
+        n_train = len(self.trainS)
+        n_val = len(self.valS)
         print("Training Size", n_train)
         print("Validation Size", n_val)
         tf.set_random_seed(self.random_state)
@@ -189,18 +208,18 @@ class chatBot(object):
             np.random.shuffle(batches)
             total_cost = 0.0
             for start, end in batches:
-                s = trainS[start:end]
-                q = trainQ[start:end]
-                a = trainA[start:end]
+                s = self.trainS[start:end]
+                q = self.trainQ[start:end]
+                a = self.trainA[start:end]
 
                 cost_t = self.model.batch_fit(s, q, a)
                 total_cost += cost_t
             if t % self.evaluation_interval == 0:
-                train_preds = self.batch_predict(trainS, trainQ, n_train)
-                val_preds = self.batch_predict(valS, valQ, n_val)
+                train_preds = self.batch_predict(self.trainS, self.trainQ, n_train)
+                val_preds = self.batch_predict(self.valS, self.valQ, n_val)
                 train_acc = metrics.accuracy_score(
-                    np.array(train_preds), trainA)
-                val_acc = metrics.accuracy_score(val_preds, valA)
+                    np.array(train_preds), self.trainA)
+                val_acc = metrics.accuracy_score(val_preds, self.valA)
                 print('-----------------------')
                 print('Epoch', t)
                 print('Total Cost:', total_cost)
@@ -230,17 +249,14 @@ class chatBot(object):
             self.saver.restore(self.sess, ckpt.model_checkpoint_path)
             # Basically recreate the indices of new words in the same way as train function. If index position different in test compared to train,
             # the look up table embedding features are different for the word, reducing accuracy
-            trainS, trainQ, trainA = vectorize_data(
-                self.trainData, self.word2vec, self.max_sentence_size, self.batch_size, self.n_cand, self.memory_size, self.vocab, self.ivocab, self.embedding_size)
-            valS, valQ, valA = vectorize_data(
-                self.valData, self.word2vec, self.max_sentence_size, self.batch_size, self.n_cand, self.memory_size, self.vocab, self.ivocab, self.embedding_size)
         else:
             print("...no checkpoint found...")
         if self.isInteractive:
             self.interactive()
         else:
             testS, testQ, testA = vectorize_data(
-                self.testData, self.word2vec, self.max_sentence_size, self.batch_size, self.n_cand, self.memory_size, self.vocab, self.ivocab, self.embedding_size)
+                self.testData, self.word2vec, self.max_sentence_size, self.batch_size, self.n_cand, self.memory_size, self.vocab, self.ivocab, self.embedding_size,
+                uncertain_word = True, uncertain = self.uncertain_word_index)
             n_test = len(testS)
             print("Testing Size", n_test)
             test_preds = self.batch_predict(testS, testQ, n_test)

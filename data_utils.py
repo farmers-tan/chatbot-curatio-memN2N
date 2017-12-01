@@ -180,7 +180,7 @@ def vectorize_candidates(candidates,word_idx,sentence_size, vocab, ivocab, word_
 # built over training, it will be 0. So new word cannot be well predicted. Max sentence length is 
 # kept and 0's are appended whenever the sentence length is less than max sentence length. Means
 # you cant ask a query more than max sentence lenght or it may fail
-def vectorize_data(data, word_idx, sentence_size, batch_size, candidates_size, max_memory_size, vocab, ivocab, word_vector_size):
+def vectorize_data(data, word_idx, sentence_size, batch_size, candidates_size, max_memory_size, vocab, ivocab, word_vector_size, uncertain_word = False, uncertain = -1):
     """
     Vectorize stories and queries.
 
@@ -194,7 +194,8 @@ def vectorize_data(data, word_idx, sentence_size, batch_size, candidates_size, m
     S = []
     Q = []
     A = []
-    data.sort(key=lambda x:len(x[0]),reverse=True)
+    # Do not sort. Keep data as is from reading of files
+    # data.sort(key=lambda x:len(x[0]),reverse=True)
     for i, (story, query, answer) in enumerate(data):
         if i%batch_size==0:
             memory_size=max(1,min(max_memory_size,len(story)))
@@ -202,7 +203,11 @@ def vectorize_data(data, word_idx, sentence_size, batch_size, candidates_size, m
         for i, sentence in enumerate(story, 1):
             ls = max(0, sentence_size - len(sentence))
             #ss.append([word_idx[w] if w in word_idx else 0 for w in sentence] + [0] * ls)
-            ss.append([process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="index") for w in sentence] + [0] * ls)
+            # If story or query is either the unknown response related or its during interactive mode/test
+            if answer == 45 or uncertain_word:
+                ss.append([process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="index", uncertain_word = True, uncertain = uncertain) for w in sentence] + [0] * ls)
+            else:
+                ss.append([process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="index") for w in sentence] + [0] * ls)
             # inp_vector = [list(process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="index")) for w in sentence]
 
         # take only the most recent sentences that fit in memory
@@ -215,7 +220,10 @@ def vectorize_data(data, word_idx, sentence_size, batch_size, candidates_size, m
 
         lq = max(0, sentence_size - len(query))
         #q = [word_idx[w] if w in word_idx else 0 for w in query] + [0] * lq
-        q = [process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="index") for w in query] + [0] * lq
+        if answer == 45 or uncertain_word:
+            q = [process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="index", uncertain_word = True, uncertain = uncertain) for w in query] + [0] * lq
+        else:
+            q = [process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="index") for w in query] + [0] * lq
 
         S.append(np.array(ss))
         Q.append(np.array(q))
@@ -245,19 +253,24 @@ def create_vector(word, word2vec, word_vector_size, silent=True):
         print("utils.py::create_vector => %s is missing" % word)
     return vector
 
-def process_word(word, word2vec, vocab, ivocab, word_vector_size, to_return="word2vec", silent=True):
+def process_word(word, word2vec, vocab, ivocab, word_vector_size, to_return="word2vec", silent=True, uncertain_word=False, uncertain = -1):
     if not word in word2vec:
         create_vector(word, word2vec, word_vector_size, silent)
     if not word in vocab: 
-        next_index = len(vocab)
-        vocab[word] = next_index
-        ivocab[next_index] = word
+        # During training, only after training in-context, we go to out of context and any new word
+        # out of vocab is treated as the uncertain word defined before
+        # In interactive testing, an unknown word not in vocab is that unknown word learned from train set
+        if uncertain_word:
+            vocab[word] = uncertain
+            word2vec[word] = word2vec[ivocab[uncertain]]
+        else:
+            next_index = len(ivocab)
+            vocab[word] = next_index
+            ivocab[next_index] = word
 
     vec = list(word2vec[word])
     if vec == []:
         create_vector(word, word2vec, word_vector_size, silent)
-        # print ("creating vector")
-        # print(word)
     
     if to_return == "word2vec":
         return word2vec[word]
