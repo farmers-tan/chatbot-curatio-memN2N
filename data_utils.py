@@ -15,8 +15,10 @@ def load_candidates(data_dir, task_id):
     candid_dic={}
     if task_id==6:
         candidates_f='dialog-babi-task6-dstc2-candidates.txt'
-    else:
+    elif task_id==7:
         candidates_f='dialog-babi-candidates-2.txt'
+    else:
+        candidates_f='dialog-babi-candidates.txt'
     with open(os.path.join(data_dir,candidates_f)) as f:
         for i,line in enumerate(f):
             candid_dic[line.strip().split(' ',1)[1]] = i
@@ -204,7 +206,7 @@ def vectorize_data(data, word_idx, sentence_size, batch_size, candidates_size, m
             ls = max(0, sentence_size - len(sentence))
             #ss.append([word_idx[w] if w in word_idx else 0 for w in sentence] + [0] * ls)
             # If story or query is either the unknown response related or its during interactive mode/test
-            if answer == 45 or uncertain_word:
+            if uncertain_word or answer == 45:
                 ss.append([process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="index", uncertain_word = True, uncertain = uncertain) for w in sentence] + [0] * ls)
             else:
                 ss.append([process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="index") for w in sentence] + [0] * ls)
@@ -220,7 +222,7 @@ def vectorize_data(data, word_idx, sentence_size, batch_size, candidates_size, m
 
         lq = max(0, sentence_size - len(query))
         #q = [word_idx[w] if w in word_idx else 0 for w in query] + [0] * lq
-        if answer == 45 or uncertain_word:
+        if uncertain_word or answer == 45:
             q = [process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="index", uncertain_word = True, uncertain = uncertain) for w in query] + [0] * lq
         else:
             q = [process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="index") for w in query] + [0] * lq

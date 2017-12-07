@@ -72,6 +72,24 @@ class nltkHelper(object):
 				# 	#print("1 " + join_string.join(temp_query) + "\t" + self.indx2candid[answer] + "\n\n")
 				# 	file.write("1 " + join_string.join(temp_query) + "\t" + self.indx2candid[answer] + "\n\n")
 
+	def generate_multi_dialogs(self, file):
+		self.data.sort(key=lambda x:len(x[0]),reverse=True)
+		join_string = " "
+		for i, (story, query, answer) in enumerate(self.data):
+			for j, w in enumerate(answer):
+				temp_query = list(query)
+				syns = self.find_synonyms(w)
+				if w in self.banned_words:
+					continue
+				if syns == None:
+					continue
+				# Need to have a framework for generating answers
+				# for syn in syns:
+				# 	temp_query[j] = syn
+				# 	#print(syn)
+				# 	#print("1 " + join_string.join(temp_query) + "\t" + self.indx2candid[answer] + "\n\n")
+				# 	file.write("1 " + join_string.join(temp_query) + "\t" + self.indx2candid[answer] + "\n\n")
+
 
 if __name__ == '__main__':
 	task_id = 7

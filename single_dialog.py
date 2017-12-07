@@ -78,7 +78,6 @@ class chatBot(object):
                 word_vector_size = self.embedding_size, 
                 to_return = "index")
 
-
         candidates, self.candid2indx = load_candidates(
             self.data_dir, self.task_id)
         self.n_cand = len(candidates)
