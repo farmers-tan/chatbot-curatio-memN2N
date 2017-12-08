@@ -4,6 +4,7 @@ from __future__ import print_function
 from data_utils import load_dialog_task, vectorize_data, load_candidates, vectorize_candidates, load_glove, tokenize, process_word, create_embedding
 from sklearn import metrics
 from memn2n import MemN2NDialog
+from memn2n import MemN2NDialogHydbrid
 from itertools import chain
 from six.moves import range, reduce
 import sys
@@ -108,9 +109,12 @@ class chatBot(object):
         optimizer = tf.train.AdamOptimizer(
             learning_rate=self.learning_rate, epsilon=self.epsilon)
         self.sess = tf.Session()
-        # Set max sentence vector size
+
         # Need to understand more about sentence size. Model failing because sentence size > candidate_sentence_size? Answers longer than queries?
-        self.model = MemN2NDialog(self.batch_size, self.vocab_size, self.n_cand, self.max_sentence_size, self.embedding_size, self.candidates_vec, session=self.sess,
+        # self.model = MemN2NDialog(self.batch_size, self.vocab_size, self.n_cand, self.max_sentence_size, self.embedding_size, self.candidates_vec, session=self.sess,
+        #                           hops=self.hops, max_grad_norm=self.max_grad_norm, optimizer=optimizer, task_id=task_id)
+        # Call our own memn2N branched hybrid
+        self.model = MemN2NDialogHydbrid(self.batch_size, self.vocab_size, self.n_cand, self.max_sentence_size, self.embedding_size, self.candidates_vec, session=self.sess,
                                   hops=self.hops, max_grad_norm=self.max_grad_norm, optimizer=optimizer, task_id=task_id)
         self.saver = tf.train.Saver(max_to_keep=50)
 
