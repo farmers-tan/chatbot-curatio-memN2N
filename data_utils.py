@@ -197,7 +197,8 @@ def vectorize_data(data, word_idx, sentence_size, batch_size, candidates_size, m
     Q = []
     A = []
     # Do not sort. Keep data as is from reading of files
-    # data.sort(key=lambda x:len(x[0]),reverse=True)
+    # Keep this in mind, it reduces accuracy on task 1 and it might reduce accuracy on Curatio test set
+    data.sort(key=lambda x:len(x[0]),reverse=True)
     for i, (story, query, answer) in enumerate(data):
         if i%batch_size==0:
             memory_size=max(1,min(max_memory_size,len(story)))
@@ -207,7 +208,7 @@ def vectorize_data(data, word_idx, sentence_size, batch_size, candidates_size, m
             #ss.append([word_idx[w] if w in word_idx else 0 for w in sentence] + [0] * ls)
             # If story or query is either the unknown response related or its during interactive mode/test
             if uncertain_word or answer == 45:
-                ss.append([process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="index", uncertain_word = True, uncertain = uncertain) for w in sentence] + [0] * ls)
+                ss.append([process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="index", uncertain_word = False, uncertain = uncertain) for w in sentence] + [0] * ls)
             else:
                 ss.append([process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="index") for w in sentence] + [0] * ls)
             # inp_vector = [list(process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="index")) for w in sentence]
@@ -223,7 +224,7 @@ def vectorize_data(data, word_idx, sentence_size, batch_size, candidates_size, m
         lq = max(0, sentence_size - len(query))
         #q = [word_idx[w] if w in word_idx else 0 for w in query] + [0] * lq
         if uncertain_word or answer == 45:
-            q = [process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="index", uncertain_word = True, uncertain = uncertain) for w in query] + [0] * lq
+            q = [process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="index", uncertain_word = False, uncertain = uncertain) for w in query] + [0] * lq
         else:
             q = [process_word(w, word_idx, vocab, ivocab, word_vector_size, to_return="index") for w in query] + [0] * lq
 

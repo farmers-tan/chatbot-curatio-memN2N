@@ -168,9 +168,9 @@ class MemN2NDialog(object):
             A = tf.concat([nil_word_slot, self._init(
                 [self._vocab_size - 1, self._embedding_size])], 0)
             self.A = tf.Variable(A, name="A")
-            U_emb = tf.concat([nil_word_slot, self._init(
-                [self._vocab_size - 1, self._embedding_size])], 0)
-            self.U_emb = tf.Variable(U_emb, name="U_emb")
+            # U_emb = tf.concat([nil_word_slot, self._init(
+            #     [self._vocab_size - 1, self._embedding_size])], 0)
+            # self.U_emb = tf.Variable(U_emb, name="U_emb")
             self.H = tf.Variable(self._init(
                 [self._embedding_size, self._embedding_size]), name="H")
             W = tf.concat([nil_word_slot, self._init(
@@ -178,7 +178,7 @@ class MemN2NDialog(object):
             self.W = tf.Variable(W, name="W")
 
             # self.W = tf.Variable(self._init([self._vocab_size, self._embedding_size]), name="W")
-        self._nil_vars = set([self.A.name, self.U_emb.name, self.W.name])
+        self._nil_vars = set([self.A.name, self.W.name])
 
     def _inference(self, stories, queries):
         with tf.variable_scope(self._name):
@@ -187,11 +187,15 @@ class MemN2NDialog(object):
             u = [u_0]
 
             # Use different embedding matrix for final addition step with candidates_embedding
-            u_emb = tf.nn.embedding_lookup(self.U_emb, queries)
-            u_emb = tf.reduce_sum(u_emb, 1)
+            #u_emb = tf.nn.embedding_lookup(self.U_emb, queries)
+            #u_emb = tf.reduce_sum(u_emb, 1)
+            #u_emb = tf.expand_dims(u_emb, 1)
 
             for _ in range(self._hops):
                 m_emb = tf.nn.embedding_lookup(self.A, stories)
+                # Append question embedding with memory embedding but from different embedding matrix U_emb
+                # m_emb.append(u_emb)
+                #m_emb = tf.concat([m_emb, u_emb], 1)
                 m = tf.reduce_sum(m_emb, 2)
                 # hack to get around no reduce_dot
                 u_temp = tf.transpose(tf.expand_dims(u[-1], -1), [0, 2, 1])
@@ -219,7 +223,7 @@ class MemN2NDialog(object):
             # instead return tf.matmul(u_0, tf.transpose(candidates_emb_sum))
             # Try element wise multiplication of u_k and u_0
 
-            u_k = u_emb + u_k
+            #u_k = u_emb + u_k
             return tf.matmul(u_k, tf.transpose(candidates_emb_sum))
             # logits=tf.matmul(u_k, self.W)
             # return
