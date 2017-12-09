@@ -4,7 +4,7 @@ from __future__ import print_function
 from data_utils import load_dialog_task, vectorize_data, load_candidates, vectorize_candidates, load_glove, tokenize, process_word, create_embedding
 from sklearn import metrics
 from memn2n import MemN2NDialog
-from memn2n import MemN2NDialogHydbrid
+from memn2n import MemN2NDialogHybrid
 from itertools import chain
 from six.moves import range, reduce
 import sys
@@ -23,7 +23,7 @@ tf.flags.DEFINE_integer("hops", 3, "Number of hops in the Memory Network.")
 tf.flags.DEFINE_integer("epochs", 200, "Number of epochs to train for.")
 tf.flags.DEFINE_integer("embedding_size", 100,
                         "Embedding size for embedding matrices.")
-tf.flags.DEFINE_integer("memory_size", 100, "Maximum size of memory.")
+tf.flags.DEFINE_integer("memory_size", 500, "Maximum size of memory.")
 tf.flags.DEFINE_integer("task_id", 6, "bAbI task id, 1 <= id <= 6")
 tf.flags.DEFINE_integer("random_state", None, "Random state.")
 tf.flags.DEFINE_string("data_dir", "data/1-1-QA-without-context/",
@@ -114,7 +114,7 @@ class chatBot(object):
         # self.model = MemN2NDialog(self.batch_size, self.vocab_size, self.n_cand, self.max_sentence_size, self.embedding_size, self.candidates_vec, session=self.sess,
         #                           hops=self.hops, max_grad_norm=self.max_grad_norm, optimizer=optimizer, task_id=task_id)
         # Call our own memn2N branched hybrid
-        self.model = MemN2NDialogHydbrid(self.batch_size, self.vocab_size, self.n_cand, self.max_sentence_size, self.embedding_size, self.candidates_vec, session=self.sess,
+        self.model = MemN2NDialogHybrid(self.batch_size, self.vocab_size, self.n_cand, self.max_sentence_size, self.embedding_size, self.candidates_vec, session=self.sess,
                                   hops=self.hops, max_grad_norm=self.max_grad_norm, optimizer=optimizer, task_id=task_id)
         self.saver = tf.train.Saver(max_to_keep=50)
 

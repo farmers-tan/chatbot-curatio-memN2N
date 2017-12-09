@@ -44,3 +44,9 @@
 1 We are happy to hear you are interested in what we are doing! To stay informed, you can join our mailing list by going to our website, https://curatio.me/. At the bottom of the page there is a box to enter your email address to receive our updates. 
 1 If you encounter an offensive post on Curatio, you can notify a Curatio moderator by flagging the post as inappropriate. To flag a post as inappropriate:\n1. While viewing the offensive post, on the bottom right of the post, tap More\n2. Tap Flag as inappropriate
 1 I am sorry, I don't understand what you are saying. Could you ask me a question relevant to Curatio health network? Thank you.
+1 Is there anything else that I can help you with today?
+1 Take care and have a great day.
+1 post_link_topic.\nDoes this help?
+1 api_call_previous_posts
+1 api_call_web
+1 I see. I did not find anyone in the community discussing <ENTITY>. Would you be able to give me better tag words to search for?

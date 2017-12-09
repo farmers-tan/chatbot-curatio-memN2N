@@ -211,6 +211,7 @@ class MemN2NDialogHybrid(object):
                 u_k = tf.matmul(u[-1], self.H) + o_k
                 # u_k=u[-1]+tf.matmul(o_k,self.H)
                 # nonlinearity
+                u_k = tf.nn.sigmoid(u_k)
                 if self._nonlin:
                     u_k = self._nonlin(u_k)
 
@@ -218,12 +219,13 @@ class MemN2NDialogHybrid(object):
             candidates_emb = tf.nn.embedding_lookup(self.W, self._candidates)
             candidates_emb_sum = tf.reduce_sum(candidates_emb, 1)
 
+            #candidates_emb_sum = tf.concat([candidates_emb_sum, candidates_emb_sum], 1)
             # inner product of candidates_emb_sum and question embedding u_0
             # another embedding of question matrix before matmul
             # instead return tf.matmul(u_0, tf.transpose(candidates_emb_sum))
             # Try element wise multiplication of u_k and u_0
 
-            u_k = u_emb + u_k
+            u_k = tf.nn.sigmoid(u_emb + u_k)
             return tf.matmul(u_k, tf.transpose(candidates_emb_sum))
             # logits=tf.matmul(u_k, self.W)
             # return
