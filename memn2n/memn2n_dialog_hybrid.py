@@ -173,6 +173,8 @@ class MemN2NDialogHybrid(object):
             self.U_emb = tf.Variable(U_emb, name="U_emb")
             self.H = tf.Variable(self._init(
                 [self._embedding_size, self._embedding_size]), name="H")
+            # self.H1 = tf.Variable(self._init(
+            #     [self._embedding_size, self._embedding_size]), name="H1")
             W = tf.concat([nil_word_slot, self._init(
                 [self._vocab_size - 1, self._embedding_size])], 0)
             self.W = tf.Variable(W, name="W")
@@ -188,14 +190,15 @@ class MemN2NDialogHybrid(object):
 
             # Use different embedding matrix for final addition step with candidates_embedding
             u_emb = tf.nn.embedding_lookup(self.U_emb, queries)
+            #u_emb_rand = tf.expand_dims(u_emb, 1)
+            #print(u_emb_shape)
             u_emb = tf.reduce_sum(u_emb, 1)
-            #u_emb = tf.expand_dims(u_emb, 1)
 
             for _ in range(self._hops):
                 m_emb = tf.nn.embedding_lookup(self.A, stories)
                 # Append question embedding with memory embedding but from different embedding matrix U_emb
                 # m_emb.append(u_emb)
-                #m_emb = tf.concat([m_emb, u_emb], 1)
+                #m_emb = tf.concat([m_emb, u_emb_rand], 1)
                 m = tf.reduce_sum(m_emb, 2)
                 # hack to get around no reduce_dot
                 u_temp = tf.transpose(tf.expand_dims(u[-1], -1), [0, 2, 1])
@@ -208,10 +211,11 @@ class MemN2NDialogHybrid(object):
                 c_temp = tf.transpose(m, [0, 2, 1])
                 o_k = tf.reduce_sum(c_temp * probs_temp, 2)
 
-                u_k = tf.matmul(u[-1], self.H) + o_k
+                #o_k = tf.matmul(o_k, tf.nn.sigmoid(self.H1))
+                u_k = tf.matmul(u[-1], self.H) + tf.nn.sigmoid(o_k)
                 # u_k=u[-1]+tf.matmul(o_k,self.H)
                 # nonlinearity
-                u_k = tf.nn.sigmoid(u_k)
+                #u_k = tf.nn.tanh(u_k)
                 if self._nonlin:
                     u_k = self._nonlin(u_k)
 
@@ -225,7 +229,7 @@ class MemN2NDialogHybrid(object):
             # instead return tf.matmul(u_0, tf.transpose(candidates_emb_sum))
             # Try element wise multiplication of u_k and u_0
 
-            u_k = tf.nn.sigmoid(u_emb + u_k)
+            u_k = u_k + u_emb
             return tf.matmul(u_k, tf.transpose(candidates_emb_sum))
             # logits=tf.matmul(u_k, self.W)
             # return
@@ -265,3 +269,7 @@ class MemN2NDialogHybrid(object):
         # Before training use word_embeddings from glove vectors
         self.A = word_embeddings
         self.W = word_embeddings
+
+    # Leaky relu activation function
+    def lrelu(self, x, alpha):
+        return tf.nn.relu(x) - alpha * tf.nn.relu(-x)
