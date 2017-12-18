@@ -6,6 +6,7 @@ import numpy as np
 import tensorflow as tf
 
 stop_words=set(["a","an","the"])
+alt_stop_words = set([])
 
 
 def load_candidates(data_dir, task_id):
@@ -58,7 +59,7 @@ def tokenize(sent):
     sent=sent.lower()
     if sent=='<silence>':
         return [sent]
-    result=[x.strip() for x in re.split('(\W+)?', sent) if x.strip() and x.strip() not in stop_words]
+    result=[x.strip() for x in re.split('(\W+)?', sent) if x.strip() and x.strip() not in alt_stop_words]
     if not result:
         result=['<silence>']
     if result[-1]=='.' or result[-1]=='?' or result[-1]=='!':

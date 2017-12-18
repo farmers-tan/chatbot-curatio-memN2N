@@ -107,6 +107,7 @@ class MemN2NDialogHybrid(object):
         self._build_vars()
 
         # define summary directory
+        print("MemN2N Hybrid with Glove")
         timestamp = datetime.now().strftime('%Y%m%d-%H%M%S')
         self.root_dir = "%s_%s_%s_%s/" % ('task',
                                           str(task_id), 'summary_output', timestamp)
@@ -173,8 +174,6 @@ class MemN2NDialogHybrid(object):
             self.U_emb = tf.Variable(U_emb, name="U_emb")
             self.H = tf.Variable(self._init(
                 [self._embedding_size, self._embedding_size]), name="H")
-            # self.H1 = tf.Variable(self._init(
-            #     [self._embedding_size, self._embedding_size]), name="H1")
             W = tf.concat([nil_word_slot, self._init(
                 [self._vocab_size - 1, self._embedding_size])], 0)
             self.W = tf.Variable(W, name="W")

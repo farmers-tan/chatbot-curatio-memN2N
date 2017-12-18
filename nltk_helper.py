@@ -17,7 +17,7 @@ class nltkHelper(object):
 		# task data
 		self.trainData, self.testData, self.valData = load_dialog_task(
 		    self.data_dir, self.task_id, self.candid2indx, False)
-		self.data = self.valData
+		self.data = self.testData
 		self.banned_words = ["i", "the"]
 		self.pyD = PyDictionary()
 
@@ -73,29 +73,62 @@ class nltkHelper(object):
 				# 	file.write("1 " + join_string.join(temp_query) + "\t" + self.indx2candid[answer] + "\n\n")
 
 	def generate_multi_dialogs(self, file):
-		self.data.sort(key=lambda x:len(x[0]),reverse=True)
+		#self.data.sort(key=lambda x:len(x[0]),reverse=True)
 		join_string = " "
+		prev_story = ""
+		prev_query = ""
+		prev_answer = ""
+
+		# To get the last story with this logic
+		self.data.append([[], "", ""])
 		for i, (story, query, answer) in enumerate(self.data):
-			for j, w in enumerate(answer):
-				temp_query = list(query)
-				syns = self.find_synonyms(w)
-				if w in self.banned_words:
-					continue
-				if syns == None:
-					continue
-				# Need to have a framework for generating answers
-				# for syn in syns:
-				# 	temp_query[j] = syn
-				# 	#print(syn)
-				# 	#print("1 " + join_string.join(temp_query) + "\t" + self.indx2candid[answer] + "\n\n")
-				# 	file.write("1 " + join_string.join(temp_query) + "\t" + self.indx2candid[answer] + "\n\n")
+			# Go the last story and print that if new story starts
+			if story == []:
+				total_str = ""
+				num = 1
+				for j, w in enumerate(prev_story):
+					num = w[-1][1:]
+					append_str = join_string.join(w[:-2])
+
+					# Get punctuations to loose space around
+					append_str = append_str.replace(" ' ", "'")
+					# It's a question
+					if (w[-2] == "$u"):
+						total_str = total_str + num + " " + append_str
+					# It's an answer
+					elif (w[-2] == "$r"):
+						total_str = total_str + "\t" + append_str + "\n"
+
+				if (prev_query != ""):
+					# Print final query and answer
+					int_num = int(num) + 1
+					total_str = total_str + str(int_num) + " " + join_string.join(prev_query) + "\t" + self.indx2candid[int(prev_answer)]
+					# Get tag words to be in capital case
+					total_str = total_str.replace("<silence>", "<SILENCE>")
+					new_total_str = ""
+					end_index = int_num * 2
+					int_num = int_num + 1
+
+					# Create the same sequence of story with sentence numbers differently, all merged into one story
+					# Testing knowledge retention over multiple conversations, and inference capacity
+					for sents in total_str.split("\n"):
+						sent_splits = sents.split(" ")
+						new_total_str = new_total_str + str(int_num) + " " + join_string.join(sent_splits[1:]) + "\n"
+						int_num = int_num + 1
+
+					total_str = total_str + "\n" + new_total_str	
+					file.write(total_str + "\n")
+
+			prev_story = story
+			prev_query = query
+			prev_answer = answer
 
 
 if __name__ == '__main__':
-	task_id = 7
+	task_id = 2
 	data_dir = "data/1-1-QA-without-context/"
 
 	gen_data = nltkHelper(data_dir, task_id)
-	f = open(data_dir + "gen_data_" + str(task_id) + "_test.txt", "w")
-	gen_data.generate_queries(f)
+	f = open(data_dir + "dialog-babi-task" + str(task_id) + "-tst-dynamic.txt", "w")
+	gen_data.generate_multi_dialogs(f)
 	f.close()

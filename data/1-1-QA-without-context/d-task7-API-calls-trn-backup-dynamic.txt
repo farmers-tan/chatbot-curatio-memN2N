@@ -1,110 +1,44 @@
-1 Hi there. Hello.	Hi, this is Mary, your support agent. 
-2 Some help.	It sounds like you need some help? As your personal support agent, I am here to help! I may need a little more time to give you a great response as I'm still learning how to best answer your questions. In the meantime, you can check out our support page at: https://curatio.zendesk.com/hc/en-us or you can get in touch with someone right away by sending an email to support@curatio.me
-3 I am looking for treatment in cancer.	I wish I could help you with discussing your treatment. Unfortunately I am not a healthcare professional, but I can help connect you with other people who have a similar experience. If you haven't already completed your profile, start by tapping on MY CIRCLE or MY PROFILE and complete the information there. Once you have completed this information, I will be able to recommend people that can best discuss treatments with you.
-4 Thanks for the information	Is there anything else that I can help you with today?
-5 No Thanks	Take care and have a great day.
-
-1 Hi there. Hello.	Hi, this is Mary, your support agent. 
-2 Some help.	It sounds like you need some help? As your personal support agent, I am here to help! I may need a little more time to give you a great response as I'm still learning how to best answer your questions. In the meantime, you can check out our support page at: https://curatio.zendesk.com/hc/en-us or you can get in touch with someone right away by sending an email to support@curatio.me
-3 I am looking for treatment in cancer.	I wish I could help you with discussing your treatment. Unfortunately I am not a healthcare professional, but I can help connect you with other people who have a similar experience. If you haven't already completed your profile, start by tapping on MY CIRCLE or MY PROFILE and complete the information there. Once you have completed this information, I will be able to recommend people that can best discuss treatments with you.
-4 I have a question about chelation therapy	api_call_previous_posts
-5 <SILENCE>	post_link_topic.\nDoes this help?
-6 No, it's not what I am looking for	post_link_topic.\nDoes this help?
-7 Yeah that's perfect	Is there anything else that I can help you with today?
+1 Who is this?	Hi, this is Mary, your support agent. 
+2 Can I ask about liver disease	api_call_previous_posts liver disease
+3 <SILENCE>	post_link_topic.\nDoes this help?
+4 No, it's not what I am looking for	post_link_topic.\nDoes this help?
+5 No, it's not what I am looking for	post_link_topic.\nDoes this help?
+6 <SILENCE>	post_link_topic.\nDoes this help?
+7 <NO_RESULT>	I see. I did not find anyone in the community discussing liver disease. Would you be able to give me better tag words to search for?
 8 No Thanks	Take care and have a great day.
 
-1 Hi there. Hello.	Hi, this is Mary, your support agent. 
-2 Some help.	It sounds like you need some help? As your personal support agent, I am here to help! I may need a little more time to give you a great response as I'm still learning how to best answer your questions. In the meantime, you can check out our support page at: https://curatio.zendesk.com/hc/en-us or you can get in touch with someone right away by sending an email to support@curatio.me
-3 I am looking for treatment in cancer.	I wish I could help you with discussing your treatment. Unfortunately I am not a healthcare professional, but I can help connect you with other people who have a similar experience. If you haven't already completed your profile, start by tapping on MY CIRCLE or MY PROFILE and complete the information there. Once you have completed this information, I will be able to recommend people that can best discuss treatments with you.
-4 I have a question about chelation therapy	api_call_previous_posts
-5 <SILENCE>	post_link_topic.\nDoes this help?
-6 Can you find more info on that?	api_call_web
-7 <SILENCE>	post_link_topic.\nDoes this help?
-8 Yeah that's perfect	Is there anything else that I can help you with today?
-9 No Thanks	Take care and have a great day.
-
-1 Hi there. Hello.	Hi, this is Mary, your support agent. 
-2 How can I provide positive or negative feedback to Curatio?	You can provide feedback to Curatio by sending an email to support@curatio.me. Please include in the subject line 'Feedback for Curatio'. 
-3 I am looking for treatment in cancer.	I wish I could help you with discussing your treatment. Unfortunately I am not a healthcare professional, but I can help connect you with other people who have a similar experience. If you haven't already completed your profile, start by tapping on MY CIRCLE or MY PROFILE and complete the information there. Once you have completed this information, I will be able to recommend people that can best discuss treatments with you.
-4 I have a question about chelation therapy	api_call_previous_posts
-5 <SILENCE>	post_link_topic.\nDoes this help?
-6 Can you find more info on that?	api_call_web
-7 <SILENCE>	post_link_topic.\nDoes this help?
-8 Yeah that's perfect	Is there anything else that I can help you with today?
-9 No Thanks	Take care and have a great day.
-
-1 Hi there. Hello.	Hi, this is Mary, your support agent. 
-2 I have a question about chelation therapy	api_call_previous_posts
+1 Who is this?	Hi, this is Mary, your support agent. 
+2 Can I ask about heart attacks	api_call_previous_posts heart attacks
 3 <SILENCE>	post_link_topic.\nDoes this help?
-4 Can you find more info on that?	api_call_web
-5 <SILENCE>	post_link_topic.\nDoes this help?
-6 Yeah that's perfect	Is there anything else that I can help you with today?
-7 No Thanks	Take care and have a great day.
-
-1 Hi there.	Hi, this is Mary, your support agent. 
-2 I have a question about chelation therapy	api_call_previous_posts
-3 <SILENCE>	post_link_topic.\nDoes this help?
-4 Yeah that's perfect	Is there anything else that I can help you with today?
-5 No Thanks	Take care and have a great day.
-
-1 Hi there.	Hi, this is Mary, your support agent. 
-2 I have a question about chelation therapy	api_call_previous_posts
-3 <NO_RESULT>	I see. I did not find anyone in the community discussing entity. Would you be able to give me better tag words to search for?
-4 People were talking about chelation pumps	post_link_topic.\nDoes this help?
-5 Yeah that's perfect	Is there anything else that I can help you with today?
-6 No Thanks	Take care and have a great day.
-
-1 Hi there.	Hi, this is Mary, your support agent. 
-2 I have a question about chelation therapy	api_call_previous_posts
-3 <NO_RESULT>	I see. I did not find anyone in the community discussing <ENTITY>. Would you be able to give me better tag words to search for?
-4 People were talking about chelation pumps	post_link_topic.\nDoes this help?
-5 Can you find more info on that?	api_call_web
+4 No, it's not what I am looking for	post_link_topic.\nDoes this help?
+5 No, it's not what I am looking for	post_link_topic.\nDoes this help?
 6 <SILENCE>	post_link_topic.\nDoes this help?
-7 Yeah that's perfect	Is there anything else that I can help you with today?
+7 <NO_RESULT>	I see. I did not find anyone in the community discussing heart attacks. Would you be able to give me better tag words to search for?
 8 No Thanks	Take care and have a great day.
 
-1 Hi there.	Hi, this is Mary, your support agent. 
-2 I have a question about chelation therapy	api_call_previous_posts
-3 <NO_RESULT>	I see. I did not find anyone in the community discussing <ENTITY>. Would you be able to give me better tag words to search for?
-4 People were talking about chelation pumps	post_link_topic.\nDoes this help?
+1 Who is this?	Hi, this is Mary, your support agent. 
+2 Can I ask about chelation pumps	api_call_previous_posts chelation pumps
+3 <SILENCE>	post_link_topic.\nDoes this help?
+4 No, it's not what I am looking for	post_link_topic.\nDoes this help?
 5 No, it's not what I am looking for	post_link_topic.\nDoes this help?
-6 Can you find more info on that?	api_call_web
-7 <SILENCE>	post_link_topic.\nDoes this help?
-8 Yeah that's perfect	Is there anything else that I can help you with today?
-9 No Thanks	Take care and have a great day.
-
-1 Hi there.	Hi, this is Mary, your support agent. 
-2 I have a question about chelation therapy	api_call_previous_posts
-3 <NO_RESULT>	I see. I did not find anyone in the community discussing <ENTITY>. Would you be able to give me better tag words to search for?
-4 People were talking about chelation pumps	post_link_topic.\nDoes this help?
-5 No, it's not what I am looking for	post_link_topic.\nDoes this help?
-6 Can you find more info on that?	api_call_web
-7 <SILENCE>	post_link_topic.\nDoes this help?
-8 Yeah that's perfect	Is there anything else that I can help you with today?
-9 I am looking for treatment in cancer.	I wish I could help you with discussing your treatment. Unfortunately I am not a healthcare professional, but I can help connect you with other people who have a similar experience. If you haven't already completed your profile, start by tapping on MY CIRCLE or MY PROFILE and complete the information there. Once you have completed this information, I will be able to recommend people that can best discuss treatments with you.
-10 No Thanks	Take care and have a great day.
-
-1 Hi there.	Hi, this is Mary, your support agent. 
-2 I have a question about chelation therapy	api_call_previous_posts
-3 <NO_RESULT>	I see. I did not find anyone in the community discussing <ENTITY>. Would you be able to give me better tag words to search for?
-4 People were talking about chelation pumps	post_link_topic.\nDoes this help?
-5 No, it's not what I am looking for	post_link_topic.\nDoes this help?
-6 Can you find more info on that?	api_call_web
-7 <SILENCE>	post_link_topic.\nDoes this help?
-8 Yeah that's perfect	Is there anything else that I can help you with today?
-9 I am looking for treatment in cancer.	I wish I could help you with discussing your treatment. Unfortunately I am not a healthcare professional, but I can help connect you with other people who have a similar experience. If you haven't already completed your profile, start by tapping on MY CIRCLE or MY PROFILE and complete the information there. Once you have completed this information, I will be able to recommend people that can best discuss treatments with you.
-10 How can I provide positive or negative feedback to Curatio?	You can provide feedback to Curatio by sending an email to support@curatio.me. Please include in the subject line 'Feedback for Curatio'. 
-11 How do I message and chat with my friends of circle?	It is easy to chat with friends in your circle. \n1. From any screen in Curatio click the text bubble icon in the top right corner\n2. Select the friend you want to chat with\n3. Type your message and click send\nYou will be notified when your friend responds to your message.
-12 Thanks	Is there anything else that I can help you with today?
-13 No Thanks.	Take care and have a great day.
-
-1 Hi there. Hello.	Hi, this is Mary, your support agent. 
-2 How can I provide positive or negative feedback to Curatio?	You can provide feedback to Curatio by sending an email to support@curatio.me. Please include in the subject line 'Feedback for Curatio'. 
-3 I am looking for treatment in cancer.	I wish I could help you with discussing your treatment. Unfortunately I am not a healthcare professional, but I can help connect you with other people who have a similar experience. If you haven't already completed your profile, start by tapping on MY CIRCLE or MY PROFILE and complete the information there. Once you have completed this information, I will be able to recommend people that can best discuss treatments with you.
-4 How do I message and chat with my friends of circle?	It is easy to chat with friends in your circle. \n1. From any screen in Curatio click the text bubble icon in the top right corner\n2. Select the friend you want to chat with\n3. Type your message and click send\nYou will be notified when your friend responds to your message.
-5 I have a question about chelation therapy	api_call_previous_posts
 6 <SILENCE>	post_link_topic.\nDoes this help?
-7 Can you find more info on that?	api_call_web
-8 <SILENCE>	post_link_topic.\nDoes this help?
-9 Yeah that's perfect	Is there anything else that I can help you with today?
-10 No Thanks	Take care and have a great day.
+7 <NO_RESULT>	I see. I did not find anyone in the community discussing chelation pumps. Would you be able to give me better tag words to search for?
+8 No Thanks	Take care and have a great day.
+
+1 Who is this?	Hi, this is Mary, your support agent. 
+2 Can I ask about lung cancer	api_call_previous_posts lung cancer
+3 <SILENCE>	post_link_topic.\nDoes this help?
+4 No, it's not what I am looking for	post_link_topic.\nDoes this help?
+5 No, it's not what I am looking for	post_link_topic.\nDoes this help?
+6 <SILENCE>	post_link_topic.\nDoes this help?
+7 <NO_RESULT>	I see. I did not find anyone in the community discussing lung cancer. Would you be able to give me better tag words to search for?
+8 No Thanks	Take care and have a great day.
+
+1 Who is this?	Hi, this is Mary, your support agent. 
+2 Can I ask about acne	api_call_previous_posts acne
+3 <SILENCE>	post_link_topic.\nDoes this help?
+4 No, it's not what I am looking for	post_link_topic.\nDoes this help?
+5 No, it's not what I am looking for	post_link_topic.\nDoes this help?
+6 <SILENCE>	post_link_topic.\nDoes this help?
+7 <NO_RESULT>	I see. I did not find anyone in the community discussing acne. Would you be able to give me better tag words to search for?
+8 No Thanks	Take care and have a great day.
