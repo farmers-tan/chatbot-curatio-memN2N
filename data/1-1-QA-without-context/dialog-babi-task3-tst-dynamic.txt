@@ -1,0 +1,67 @@
+1 resto_paris_moderate_italian_6stars r_phone resto_paris_moderate_italian_6stars_phone
+2 resto_paris_moderate_italian_6stars r_cuisine italian
+3 resto_paris_moderate_italian_6stars r_address resto_paris_moderate_italian_6stars_address
+4 resto_paris_moderate_italian_6stars r_location paris
+5 resto_paris_moderate_italian_6stars r_number eight
+6 resto_paris_moderate_italian_6stars r_price moderate
+7 resto_paris_moderate_italian_6stars r_rating 6
+8 resto_paris_moderate_italian_5stars r_phone resto_paris_moderate_italian_5stars_phone
+9 resto_paris_moderate_italian_5stars r_cuisine italian
+10 resto_paris_moderate_italian_5stars r_address resto_paris_moderate_italian_5stars_address
+11 resto_paris_moderate_italian_5stars r_location paris
+12 resto_paris_moderate_italian_5stars r_number eight
+13 resto_paris_moderate_italian_5stars r_price moderate
+14 resto_paris_moderate_italian_5stars r_rating 5
+15 resto_paris_moderate_italian_2stars r_phone resto_paris_moderate_italian_2stars_phone
+16 resto_paris_moderate_italian_2stars r_cuisine italian
+17 resto_paris_moderate_italian_2stars r_address resto_paris_moderate_italian_2stars_address
+18 resto_paris_moderate_italian_2stars r_location paris
+19 resto_paris_moderate_italian_2stars r_number eight
+20 resto_paris_moderate_italian_2stars r_price moderate
+21 resto_paris_moderate_italian_2stars r_rating 2
+22 hello	hello what can i help you with today
+23 can you make a restaurant reservation for eight people	i'm on it
+24 <SILENCE>	any preference on a type of cuisine
+25 with italian food	where should it be
+26 paris please	which price range are looking for
+27 in a moderate price range please	ok let me look into some options for you
+28 <SILENCE>	what do you think of this option : resto_paris_moderate_italian_6stars
+29 do you have something else	sure let me find an other option for you
+30 <SILENCE>	what do you think of this option : resto_paris_moderate_italian_5stars
+31 no i don't like that	sure let me find an other option for you
+32 <SILENCE>	what do you think of this option : resto_paris_moderate_italian_2stars
+33 it ' s perfect	great let me do the reservation
+34 resto_paris_moderate_italian_6stars r_phone resto_paris_moderate_italian_6stars_phone
+35 resto_paris_moderate_italian_6stars r_cuisine italian
+36 resto_paris_moderate_italian_6stars r_address resto_paris_moderate_italian_6stars_address
+37 resto_paris_moderate_italian_6stars r_location paris
+38 resto_paris_moderate_italian_6stars r_number eight
+39 resto_paris_moderate_italian_6stars r_price moderate
+40 resto_paris_moderate_italian_6stars r_rating 6
+41 resto_paris_moderate_italian_5stars r_phone resto_paris_moderate_italian_5stars_phone
+42 resto_paris_moderate_italian_5stars r_cuisine italian
+43 resto_paris_moderate_italian_5stars r_address resto_paris_moderate_italian_5stars_address
+44 resto_paris_moderate_italian_5stars r_location paris
+45 resto_paris_moderate_italian_5stars r_number eight
+46 resto_paris_moderate_italian_5stars r_price moderate
+47 resto_paris_moderate_italian_5stars r_rating 5
+48 resto_paris_moderate_italian_2stars r_phone resto_paris_moderate_italian_2stars_phone
+49 resto_paris_moderate_italian_2stars r_cuisine italian
+50 resto_paris_moderate_italian_2stars r_address resto_paris_moderate_italian_2stars_address
+51 resto_paris_moderate_italian_2stars r_location paris
+52 resto_paris_moderate_italian_2stars r_number eight
+53 resto_paris_moderate_italian_2stars r_price moderate
+54 resto_paris_moderate_italian_2stars r_rating 2
+55 hello	hello what can i help you with today
+56 can you make a restaurant reservation for eight people	i'm on it
+57 <SILENCE>	any preference on a type of cuisine
+58 with italian food	where should it be
+59 paris please	which price range are looking for
+60 in a moderate price range please	ok let me look into some options for you
+61 <SILENCE>	what do you think of this option : resto_paris_moderate_italian_6stars
+62 do you have something else	sure let me find an other option for you
+63 <SILENCE>	what do you think of this option : resto_paris_moderate_italian_5stars
+64 no i don't like that	sure let me find an other option for you
+65 <SILENCE>	what do you think of this option : resto_paris_moderate_italian_2stars
+66 it ' s perfect	great let me do the reservation
+

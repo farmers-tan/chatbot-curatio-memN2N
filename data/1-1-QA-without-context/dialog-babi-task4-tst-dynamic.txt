@@ -1,0 +1,23 @@
+1 resto_bombay_cheap_spanish_2stars r_phone resto_bombay_cheap_spanish_2stars_phone
+2 resto_bombay_cheap_spanish_2stars r_cuisine spanish
+3 resto_bombay_cheap_spanish_2stars r_address resto_bombay_cheap_spanish_2stars_address
+4 resto_bombay_cheap_spanish_2stars r_location bombay
+5 resto_bombay_cheap_spanish_2stars r_number eight
+6 resto_bombay_cheap_spanish_2stars r_price cheap
+7 resto_bombay_cheap_spanish_2stars r_rating 2
+8 hi	hello what can i help you with today
+9 i'd like to book a table at resto_bombay_cheap_spanish_2stars	great let me do the reservation
+10 may i have the phone number of the restaurant	here it is resto_bombay_cheap_spanish_2stars_phone
+11 do you have its address	here it is resto_bombay_cheap_spanish_2stars_address
+12 resto_bombay_cheap_spanish_2stars r_phone resto_bombay_cheap_spanish_2stars_phone
+13 resto_bombay_cheap_spanish_2stars r_cuisine spanish
+14 resto_bombay_cheap_spanish_2stars r_address resto_bombay_cheap_spanish_2stars_address
+15 resto_bombay_cheap_spanish_2stars r_location bombay
+16 resto_bombay_cheap_spanish_2stars r_number eight
+17 resto_bombay_cheap_spanish_2stars r_price cheap
+18 resto_bombay_cheap_spanish_2stars r_rating 2
+19 hi	hello what can i help you with today
+20 i'd like to book a table at resto_bombay_cheap_spanish_2stars	great let me do the reservation
+21 may i have the phone number of the restaurant	here it is resto_bombay_cheap_spanish_2stars_phone
+22 do you have its address	here it is resto_bombay_cheap_spanish_2stars_address
+

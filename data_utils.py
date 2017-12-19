@@ -43,7 +43,7 @@ def load_dialog_task(data_dir, task_id, candid_dic, isOOV):
     if isOOV:
         test_file = [f for f in files if s in f and 'tst-OOV' in f][0]
     else: 
-        test_file = [f for f in files if s in f and 'tst.' in f][0]
+        test_file = [f for f in files if s in f and 'tst-dynamic.' in f][0]
     val_file = [f for f in files if s in f and 'dev' in f][0]
     train_data = get_dialogs(train_file,candid_dic)
     test_data = get_dialogs(test_file,candid_dic)
@@ -59,7 +59,7 @@ def tokenize(sent):
     sent=sent.lower()
     if sent=='<silence>':
         return [sent]
-    result=[x.strip() for x in re.split('(\W+)?', sent) if x.strip() and x.strip() not in alt_stop_words]
+    result=[x.strip() for x in re.split('(\W+)?', sent) if x.strip() and x.strip() not in stop_words]
     if not result:
         result=['<silence>']
     if result[-1]=='.' or result[-1]=='?' or result[-1]=='!':

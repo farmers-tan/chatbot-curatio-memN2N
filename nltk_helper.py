@@ -86,6 +86,7 @@ class nltkHelper(object):
 			if story == []:
 				total_str = ""
 				num = 1
+				question = False
 				for j, w in enumerate(prev_story):
 					num = w[-1][1:]
 					append_str = join_string.join(w[:-2])
@@ -94,10 +95,16 @@ class nltkHelper(object):
 					append_str = append_str.replace(" ' ", "'")
 					# It's a question
 					if (w[-2] == "$u"):
-						total_str = total_str + num + " " + append_str
+						total_str = total_str + num + " " + append_str + "\t"
+						question = True
 					# It's an answer
+					elif (w[-2] == "$r" and question):
+						total_str = total_str + append_str + "\n"
+						question = False
+					# It's an option or a simple fact not accompanied by a question
 					elif (w[-2] == "$r"):
-						total_str = total_str + "\t" + append_str + "\n"
+						total_str = total_str + num + " " + append_str + "\n"
+						question = False
 
 				if (prev_query != ""):
 					# Print final query and answer
@@ -105,6 +112,11 @@ class nltkHelper(object):
 					total_str = total_str + str(int_num) + " " + join_string.join(prev_query) + "\t" + self.indx2candid[int(prev_answer)]
 					# Get tag words to be in capital case
 					total_str = total_str.replace("<silence>", "<SILENCE>")
+					# check for other punctuations
+					total_str = total_str.replace(" ' ", "'")
+					# total_str = total_str.replace(" . ", ". ")
+					# total_str = total_str.replace(" , ", ",")
+					# total_str = total_str.replace(" : ", ": ")
 					new_total_str = ""
 					end_index = int_num * 2
 					int_num = int_num + 1
@@ -123,12 +135,40 @@ class nltkHelper(object):
 			prev_query = query
 			prev_answer = answer
 
+	def generate_multi_dialogs_from_file(self, file, file_input):
+		stories = file_input.split("\n\n")
+		full_story = ""
+		join_string = " "
+		for i, story in enumerate(stories):
+			if story == "":
+				continue
+			sents = story.split("\n")
+			num = sents[-1].split(" ")[0]
+			int_num = int(num)
+			int_num = int_num + 1
+			num = str(int_num)
+			total_str = ""
+
+			for j, sent in enumerate(sents):
+				sent_split = sent.split(" ")
+				total_str = total_str + num + " " + join_string.join(sent_split[1:]) + "\n"
+				int_num = int_num + 1
+				num = str(int_num)
+
+			full_story = full_story + story + "\n" + total_str + "\n"
+
+		file.write(full_story)
 
 if __name__ == '__main__':
-	task_id = 2
+	task_id = 6
 	data_dir = "data/1-1-QA-without-context/"
 
 	gen_data = nltkHelper(data_dir, task_id)
 	f = open(data_dir + "dialog-babi-task" + str(task_id) + "-tst-dynamic.txt", "w")
-	gen_data.generate_multi_dialogs(f)
+	# gen_data.generate_multi_dialogs(f)
+
+	f_in = open(data_dir + "dialog-babi-task" + str(task_id) + "-dstc2-tst.txt", "r")
+	gen_data.generate_multi_dialogs_from_file(f, f_in.read())
+
 	f.close()
+	f_in.close()
