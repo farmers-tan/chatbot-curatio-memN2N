@@ -160,14 +160,14 @@ class nltkHelper(object):
 		file.write(full_story)
 
 if __name__ == '__main__':
-	task_id = 4
+	task_id = 5
 	data_dir = "data/1-1-QA-without-context/"
 
 	gen_data = nltkHelper(data_dir, task_id)
-	f = open(data_dir + "dialog-babi-task" + str(task_id) + "-tst-dynamic.txt", "w")
+	f = open(data_dir + "dialog-babi-task" + str(task_id) + "-full-dialogs-tst-OOV-dynamic.txt", "w")
 	# gen_data.generate_multi_dialogs(f)
 
-	f_in = open(data_dir + "dialog-babi-task" + str(task_id) + "-phone-address-tst.txt", "r")
+	f_in = open(data_dir + "dialog-babi-task" + str(task_id) + "-full-dialogs-tst-OOV.txt", "r")
 	gen_data.generate_multi_dialogs_from_file(f, f_in.read())
 
 	f.close()
